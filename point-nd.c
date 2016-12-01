@@ -1,14 +1,17 @@
 #include<stdio.h>
 #include<math.h>
 
+// distance = 1, if you want to print the distance else 0.
+void printItems(int low, int high, int dimension, int distance);
+
 struct points {
 	double coordinate[30];
 	double distance;
-} point[30], desired;
+} point[30], temp, desired;
 
 int main() {
 
-	double x[30], temp;
+	double x[30];
 	int i, n, nearby, dimension, j, index, position;
 
 	printf("\nEnter the number of dimensions: ");
@@ -27,17 +30,9 @@ int main() {
 	}
 
 	printf("\n\nThese are the entered co-ordinates\n");
-	for(i=0; i<n; i++) {
-		printf("%d. (", i+1);
-		
-		for(j=0; j<dimension-1; j++) {
-			printf("%lf, ", point[i].coordinate[j]);
-		}
+	printItems(0, n, dimension, 0);
 
-		printf("%lf)\n", point[i].coordinate[j]);
-	}
-
-	printf("\nEnter the index of desired point: \n");
+	printf("\nEnter the index of desired point: ");
 	scanf("%d", &index);
 	printf("\nRequired number of nearby points: ");
 	scanf("%d", &nearby);
@@ -48,13 +43,13 @@ int main() {
 	}
 
 	printf("\n\nThis is the desired co-ordinate\n");
-		printf("(");
+	printf("(");
 		
-		for(j=0; j<dimension-1; j++) {
-			printf("%lf, ", desired.coordinate[j]);
-		}
+	for(j=0; j<dimension-1; j++) {
+		printf("%lf, ", desired.coordinate[j]);
+	}
 
-		printf("%lf)\n", desired.coordinate[j]);
+	printf("%lf)\n", desired.coordinate[j]);
 
 
 	//Calculate the distance.
@@ -74,17 +69,9 @@ int main() {
 	}
 
 	printf("\n\nThese are the distances\n");
-	for(i=0; i<n; i++) {
-		printf("%d. (", i+1);
-		
-		for(j=0; j<dimension-1; j++) {
-			printf("%lf, ", point[i].coordinate[j]);
-		}
+	printItems(0, n, dimension, 1);
 
-		printf("%lf) - %lf\n", point[i].coordinate[j], point[i].distance);
-	}
-
-	//Sorting.
+	//Sort.
 	for(i = 0; i < n; i++)
 	{
 		position = i;
@@ -97,42 +84,49 @@ int main() {
 
 		if(position != i)
 		{
-			for(j=0; j<dimension; j++) {
-				temp = point[i].coordinate[j];
-				point[i].coordinate[j] = point[position].coordinate[j];
-				point[position].coordinate[j] = temp;
-			}
-
-			temp = point[i].distance;
-			point[i].distance = point[position].distance;
-			point[position].distance = temp;
+			temp = point[i];
+			point[i] = point[position];
+			point[position] = temp;
 		}
 
 	}
 
 	printf("\n\nThese are the distances after sorting\n");
-	for(i=0; i<n; i++) {
+	printItems(0, n, dimension, 1);
+	printf("\nNearby Points\n");
+	printItems(1, nearby + 1, dimension, 1);
+	printf("\n");
+
+	return 0;
+}
+
+void printItems(int low, int high, int dimension, int distance) {
+	int i, j;
+
+	if(distance == 0) {
+
+		for(i=low; i<high; i++) {
 		printf("%d. (", i+1);
 		
 		for(j=0; j<dimension-1; j++) {
 			printf("%lf, ", point[i].coordinate[j]);
 		}
 
-		printf("%lf) - %lf\n", point[i].coordinate[j], point[i].distance);
-	}
-
-	printf("\nNearby Points\n");
-	for(i=1; i<=nearby; i++) {
-		printf("%d. (", i);
-		
-		for(j=0; j<dimension-1; j++) {
-			printf("%lf, ", point[i].coordinate[j]);
+		printf("%lf)\n", point[i].coordinate[j]);
 		}
 
-		printf("%lf) - %lf\n", point[i].coordinate[j], point[i].distance);
 	}
 
-	printf("\n");
+	else {
 
-	return 0;
+		for(i=low; i<high; i++) {
+			printf("%d. (", i+1);
+		
+			for(j=0; j<dimension-1; j++) {
+				printf("%lf, ", point[i].coordinate[j]);
+			}
+
+			printf("%lf) - %lf\n", point[i].coordinate[j], point[i].distance);
+		}
+	}
 }
